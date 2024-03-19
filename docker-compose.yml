@@ -8,7 +8,8 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ./laravel-app-01:/var/www/html
+      #- ./laravel-app-01:/var/www/html
+      - /var/jenkins_home/workspace/TEST_3/laravel-app-01:/var/www/html 
     ports:
       - "9000:9000"
     depends_on:

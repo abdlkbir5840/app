@@ -1,26 +1,30 @@
-# Utilisez l'image de PHP avec FPM (FastCGI Process Manager)
-FROM php:8.1.0-fpm
+FROM php:8.2.0-fpm
 
-# Installez les extensions PHP nécessaires
+# Installation de Composer
+RUN apt-get update && apt-get install -y wget && \
+    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+    php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
+    php -r "unlink('composer-setup.php');"
+
 RUN docker-php-ext-install pdo pdo_mysql
 
-# Installation du client MySQL
 RUN apt-get update && apt-get install -y default-mysql-client
 
-# Créez un utilisateur non root pour l'exécution du conteneur
 RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
-# Copiez les fichiers de l'application Laravel dans le conteneur avec les permissions appropriées
-COPY --chown=appuser:appgroup laravel-app-01 /var/www/html
+COPY --chown=appuser:appgroup ./laravel-app-01 /var/www/html/laravel-app-01
 
-# Définir le répertoire de travail
-WORKDIR /var/www/html
+RUN chown -R appuser:appgroup /var/www/html && \
+    chmod -R 755 /var/www/html
 
-# Exposez le port PHP-FPM (9000 par défaut)
+WORKDIR /var/www/html/laravel-app-01
+
+# Installation des dépendances Composer
+RUN composer install
+
 EXPOSE 9000
 
-# Changez l'utilisateur pour l'exécution du conteneur
 USER appuser
 
-# Commande pour démarrer PHP-FPM
 CMD ["php-fpm"]
+

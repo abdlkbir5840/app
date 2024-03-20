@@ -28,6 +28,7 @@ data:
 	docker exec laravel-app-01 php artisan db:seed
 	docker exec laravel-app-02 php artisan migrate
 	docker exec laravel-app-02 php artisan db:seed
+	
 
 serve:
 	docker-compose exec laravel-app-01 php artisan serve

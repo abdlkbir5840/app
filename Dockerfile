@@ -1,10 +1,8 @@
 FROM php:8.2.0-fpm
 
 # Installation de Composer
-RUN apt-get update && apt-get install -y wget && \
-    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-    php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
-    php -r "unlink('composer-setup.php');"
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 
 RUN docker-php-ext-install pdo pdo_mysql
 

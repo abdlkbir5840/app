@@ -1,0 +1,57 @@
+name: Laravel CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: pdo, pdo_mysql
+    
+    - name: update Composer dependencies
+      run: composer update --working-dir=laravel-app-01
+    
+    - name: clean up all compiled files and their paths
+      run: composer dump-autoload --working-dir=laravel-app-01
+    
+    - name: Install Composer dependencies
+      run: composer install --working-dir=laravel-app-01
+    
+    - name: Generate Laravel key
+      run: php laravel-app-01/artisan key:generate
+
+    - name: Run tests
+      run: php laravel-app-01/vendor/bin/phpunit laravel-app-01/tests
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    
+    - name: List files in working directory
+      run: ls -l
+    
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and push Docker image
+      run: |
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/laravel-app-01:latest .
+        docker push ${{ secrets.DOCKER_USERNAME }}/laravel-app-01:latest

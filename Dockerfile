@@ -18,7 +18,7 @@ RUN chown -R appuser:appgroup /var/www/html && \
 WORKDIR /var/www/html
 
 # Ajout de la commande pour installer les dépendances
-RUN composer install
+#RUN composer install
 
 EXPOSE 9000
 

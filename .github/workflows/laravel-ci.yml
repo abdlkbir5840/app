@@ -55,5 +55,3 @@ jobs:
       run: |
         docker build -t ${{ secrets.DOCKER_USERNAME }}/laravel-app-01:latest .
         docker push ${{ secrets.DOCKER_USERNAME }}/laravel-app-01:latest
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/nginx:latest .
-        docker push ${{ secrets.DOCKER_USERNAME }}/nginx:latest
